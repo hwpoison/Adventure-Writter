@@ -1,0 +1,25 @@
+#LOAD 
+{
+:stage_name = Habitación Extraña
+
+?puerta_rota is True
+	Vuelves a la habitación inicial, parece seguir todo igual.
+?else
+	Despiertas confuso, estás en medio de una habitación, desorientado
+	intentas rescatar el ultimo recuerdo, pero no logras, extrañas algo, no sabes que es.
+	En frente tuyo hay una puerta.
+}
+
+
+!abrir puerta{
+?puerta_rota is True
+	Pasa a la habitación sin esfuerzo, pues la puerta está destrozada...
+	&LOAD habitacion1
+?else
+	&LOAD habitacion1
+}
+
+!test_code {
+	
+
+}
