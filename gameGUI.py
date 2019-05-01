@@ -44,7 +44,6 @@ class UserInterface(Frame):
 
     def init_user_interface(self):
         # TextBox Area
-        print(dir(self.load_image("imagen.jpg")))
         self.textBox = Text(self,
                        width=73,
                        height=10,
