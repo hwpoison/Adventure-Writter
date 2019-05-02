@@ -82,8 +82,6 @@ class GameGUI(AdventureCore):
         self.init_window()
 
     def start_game(self):
-        self.game_vars = {}
-        self.game_actions = {}
         self.load_stage_file('habitacion0') #start
         self.user_interface.updateScreen(self.current_output)
         print("Escenario cargado..")
