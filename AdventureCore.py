@@ -31,22 +31,24 @@ Stages:
 		} //routine that is associated with an action (verb)
 """
 
+
 class AdventureCore(object):
 	"""
 	Structure:
 	__init__:
-		*game_vars : All variables in game
-		*game_actions : All actions availibles in actual stage
-		*current_output: All screen prints for GUI output
-		*current_directory: Actual adventure files directory
-		*DEBUG_INFO: Print logic process in console
+			*game_vars : All variables in game
+			*game_actions : All actions availibles in actual stage
+			*current_output: All screen prints for GUI output
+			*current_directory: Actual adventure files directory
+			*DEBUG_INFO: Print logic process in console
 	"""
+
 	def __init__(self):
 		self.game_vars = {}
 		self.game_actions = {}
+		self.output_buffer = []
 		self.current_stage = None
-		self.current_output = []
-		self.current_directory = None
+		self.current_adventure_dir = []
 		self.DEBUG_INFO = True
 		self.define_regxs()
 
@@ -62,6 +64,7 @@ class AdventureCore(object):
 		self.code_blocks_regx = r'([#\!][a-zA-Z0-9_\s-]*)(\n+|)\{(.*?)\}'
 		self.var_scope_value_regx = r'\$(.*?)\$'
 		self.var_scope_regx = r'(\$.*?\$)'
+		self.file_dir_resolution = r'(.*)\\(\w+)\.adventure'
 
 	def dprint(self, *args):
 		if(self.DEBUG_INFO):
@@ -161,7 +164,7 @@ class AdventureCore(object):
 					string = string.replace(svar, value[0])
 				else:
 					string = string.replace(svar, str(value))
-		self.current_output.append(string)
+		self.output_buffer.append(string)
 		self.dprint("PRINTING:", string)
 		return string
 
@@ -182,12 +185,12 @@ class AdventureCore(object):
 			if(operation):
 				operation = equality_disset.split(operation.strip())
 				if(actual_gate is not None
-						and actual_gate in self.and_regx
-						and return_status is False):
+				   and actual_gate in self.and_regx
+				   and return_status is False):
 					break
 				if(actual_gate is not None
-						and actual_gate in self.or_regx
-						and return_status is True):
+				   and actual_gate in self.or_regx
+				   and return_status is True):
 					break
 				return_status = self.check_game_var(
 					operation[0], operation[2], operation[1])
@@ -243,36 +246,44 @@ class AdventureCore(object):
 			if(tab_lvl == min_lvl or min_lvl is False):
 				self.interpret_instruction(inst_type, content)
 
+	def exec_action(self, cmd):
+		print(f"\nExecuting: {cmd}")
+		if(self.game_actions.get(cmd)):
+			self.output_buffer = []
+			self.interpret_block_code(self.game_actions[cmd])
+			return True
+		return False
+
 	def parser_stage_file(self, filename):
-		"""Analyze game file and extract specific blocks"""
-		if(self.current_directory is None):
-			self.current_directory = ''
-
+		"""Open and read adventure file"""
+		if(self.current_adventure_dir is None):
+			self.current_adventure_dir = ''
 		try:
-			full_name = self.current_directory + filename + '.adventure'
+			full_name = filename
 			stage_content = open(full_name, "r", encoding="utf-8").read()
-
 		except FileNotFoundError as error:
-			print("[!]Stage file not found:",
-				  self.current_directory + filename)
+			self.dprint(f"[!]Stage file not found:",
+						filename)
 			return False
 
 		code_block = re.compile(self.code_blocks_regx,
 								re.MULTILINE | re.DOTALL)
 		blocks = code_block.findall(stage_content)
-		return blocks
+		if(blocks):
+			return blocks
+		return False
 
 	def load_stage_file(self, stage_name):
-		content = self.parser_stage_file(stage_name)
-		if(content is False):
+		"""Open stage file and initialize vars"""
+		full_name = f"{self.current_adventure_dir}/{stage_name}.adventure"
+		print(f"[+]Loading {full_name[-10:]}...")
+		parser_content = self.parser_stage_file(full_name)
+		if(parser_content is False):
 			self.dprint("[!]Error to load stage.", ":everprint")
 			return False
-
 		self.game_actions = {}  # reset availibles actions
-		# set current stage name (if is specifiqued)
 		self.current_stage = stage_name
-
-		for block in content:
+		for block in parser_content:
 			type_event = block[0].strip().lower()
 			if(type_event == '#load'):
 				# Initialize scene variables
@@ -283,20 +294,25 @@ class AdventureCore(object):
 				# Register actions
 				self.game_actions[block[0][1:].lower().strip()] = block[2]
 		self.dprint(f"\n[+]Stage {stage_name} loaded.", ':everprint')
+		return True
 
-	def exec_action(self, cmd):
-		print(f"\nExecuting: {cmd}")
-		if(self.game_actions.get(cmd)):
-			self.current_output = []
-			self.interpret_block_code(self.game_actions[cmd])
+	def load_adventure(self, adventure_dir, stage_name):
+		"""Load adventure and initialize game vars (for GUI)"""
+		self.game_vars = {}
+		self.output_buffer = []
+		self.current_adventure_dir = adventure_dir
+		load = self.load_stage_file(stage_name)
+		print(">>>", load)
+		if(load):
 			return True
-		return False
+		else:
+			return False
 
 	def loopGame(self):
-		#test loop
+		# test loop
 		self.DEBUG_INFO = True
-		self.current_directory = 'test_adventure\\'
-		self.load_stage_file('habitacion0')  # start
+		self.current_adventure_dir = 'C:\\Users\\Guillermo\\Desktop\\Adventure Creator\\CAdventureCreator\\test_adventure'
+		self.load_stage_file('corrupto')  # start
 		while True:
 			self.exec_action("abrir puerta")
 			self.exec_action("volver")
@@ -304,5 +320,5 @@ class AdventureCore(object):
 
 
 if __name__ == '__main__':
-	n = AdventureParser()
+	n = AdventureCore()
 	n.loopGame()
