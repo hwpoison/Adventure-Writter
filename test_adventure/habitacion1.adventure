@@ -1,16 +1,18 @@
+#ROOM{
+	:stage_name = "Habitación Vacia"
+}
 #LOAD
 {
-:stage_name = Habitación Vacia
-?puerta_rota is True
-	Vuelves a esta habitacion de mierda...
-?else
-	Abres la puerta, entras y ¡PUM!  de un golpazo se cierra detras tuyo!
-	Te sorprendes, en esta habitación no hay nada..
-	:puerta_trabada = True
+Abres la puerta, entras y ¡PUM!  de un golpazo se cierra detras tuyo!
+Te sorprendes, en esta habitación no hay nada, pero de repente empiezas a escuchar un
+sonido, miras y de repente se enciende un contador en la pared!
+Quedan 10 segundos! 
+
 }
 
-!volver {
-?puerta_rota is False and puerta_trabada is True
+
+!volver{
+?puerta1.trabada is True
 	No puedes, la puerta parece estar atrancada.
 ?else
 	&LOAD habitacion0
@@ -21,12 +23,12 @@
 }
 
 !patear puerta{
-	?puerta_rota is True
+	?puerta1.destruida is True
 		La puerta ya está destrozada.
 	?else
 		Asustado, espantado, golpeas una y otra vez la puerta
 		con un par de patadas. Tras varios intentos, la puerta
 		se abre y puedes volver a la habitacion inicial.
-		:puerta_rota = True
-		:puerta_trabada = False
+		:puerta1.destruida = True
+		:puerta1.trabada = False
 }

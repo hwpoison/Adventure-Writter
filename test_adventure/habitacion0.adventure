@@ -1,25 +1,42 @@
-#LOAD 
-{
-:stage_name = Habitación Extraña
+#ROOM {
+	:stage_name = "Habitación extraña"
+}
 
-?puerta_rota is True
-	Vuelves a la habitación inicial, parece seguir todo igual.
-?else
-	Despiertas confuso, estás en medio de una habitación, desorientado
-	intentas rescatar el ultimo recuerdo, pero no logras, extrañas algo, no sabes que es.
-	En frente tuyo hay una puerta.
+#LOAD_AGAIN {
+?puerta1.destruida is True
+	Regresas a la habitación inicial pisando los trozos de la puerta que destruiste a patadas.
 }
 
 
+#LOAD {
+Despiertas adolorido, confuso, de a poco tu vista va aclarando.
+Finalmente reaccionas, parece ser que estas en una habitación sin ventanas, solo una puerta al frente tuyo, vaya a saber como llegaste hasta este lugar, sientes el metal frio de un arma que al parecer sostiene tu mano, de quien será, quien te la habrá plantado, nada se sabe, todo es un misterio.
+El juego comienza ¿Que quieres hacer?.
+:puerta1.trabada = True
+STATUS No hay ninguna pista para dar
+}
+
+
+
 !abrir puerta{
-?puerta_rota is True
-	Pasa a la habitación sin esfuerzo, pues la puerta está destrozada...
-	&LOAD habitacion1
+?puerta1.destruida is True
+	Que puerta? Ya no existe, superalo.
 ?else
+	&LOAD habitacion1
+}
+
+!pasar {
+?puerta1.destruida is True
+	Te abreas paso por los trozos de puerta que dejaste a la siguiente habitación...
 	&LOAD habitacion1
 }
 
 !test_code {
-	
+&LOAD test
+}
 
+!pegarse un tiro {
+Al parecer no soportaste la presión de por fin ser un ser compentente en esta vida de mierda, asi que como buen cobarde decidiste acabar con tu miserable existencia y desvanecer tu conciencia en la nada.
+El juego termino.
+END
 }

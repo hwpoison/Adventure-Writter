@@ -1,3 +1,21 @@
+#ROOM{
+	:stage_name = "Habitación de pruebas"
+	:stage_description = "Una habitación un tanto extraña"
+}
+
+#LOAD_AGAIN {
+	Vuelves otra vez a esta espantosa habitación
+}
+
 #LOAD 
 {
+	Apareces atado en una silla
+}
+
+
+!test {
+	&LOAD habitacion0
+}
+!test2 {
+	Hola
 }
