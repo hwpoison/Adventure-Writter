@@ -15,7 +15,7 @@ Avalible operators:
 
 	Variable asignation:
 		:var_name = var_value : Asign var in local scope (escene)
-		;;var_name = var_value : Asign var in global scopre (all scenes)
+		[x];;var_name = var_value : Asign var in global scopre (all scenes)
 
 	Coment code:
 		//: Coment Line
@@ -44,15 +44,13 @@ class AdventureCore(object):
 	"""
 	Structure:
 	__init__:
-			*game_vars : All variables in game
-			*game_actions : All actions availibles in actual stage
-			*current_output: All screen prints for GUI output
-			*current_directory: Actual adventure files directory
-			*game_status_message: misc message from game (STATUS)
-			*DEBUG_INFO: Print logic process in console
+					*game_vars : All variables in game
+					*game_actions : All actions availibles in actual stage
+					*current_output: All screen prints for GUI output
+					*current_directory: Actual adventure files directory
+					*game_status_message: misc message from game (STATUS)
+					*DEBUG_INFO: Print logic process in console
 	"""
-
-
 
 	def __init__(self):
 		self.game_vars = {}
@@ -62,16 +60,15 @@ class AdventureCore(object):
 
 		self.current_stage = None
 		self.current_adventure_dir = []
-
+		self.adventure_name = None
 		self.in_game = False
 		self.game_status_message = False
 
 		self.DEBUG_INFO = True
 		self.define_regxs()
 
-
-
 	def define_regxs(self):
+		# Instructions
 		self.instruction_types = r'\?else|\?|//|\"|:|&|END|STATUS|'
 		self.asign_value_regx = r'(.*)\s+(=|add)\s+(.*)'
 		self.load_function = r'(LOAD|CARGAR)\s+(.*)$'
@@ -84,18 +81,16 @@ class AdventureCore(object):
 		self.var_scope_value_regx = r'\$(.*?)\$'
 		self.var_scope_regx = r'(\$.*?\$)'
 		self.file_dir_resolution = r'(.*)\\(\w+)\.adventure'
-		self.custom_instruction = r'{0}\s+(.*)' #ex STATUS (TEXT)
-
+		self.custom_instruction = r'{0}\s+(.*)'  # ex STATUS (TEXT)
 
 	def dprint(self, *args):
-		#debug message print
+		# debug message print
 		if(self.DEBUG_INFO):
 			dmsg = ''.join([str(str_) for str_ in args])
 			print(dmsg)
 		elif(':everprint' in args):
 			dmsg = ''.join([str(str_) for str_ in args[:len(args)-1]])
 			print(dmsg)
-
 
 	def var_process(self, string_value):
 		"""Parse real var type and value from string"""
@@ -119,8 +114,6 @@ class AdventureCore(object):
 			return ('bool', bool_)
 
 		return ('str', string_value)
-
-
 
 	def check_game_var(self, key_var, to_compare, var_operator=''):
 		"""Logic operation, value comparation"""
@@ -149,8 +142,6 @@ class AdventureCore(object):
 				key_var = self.var_process(key_var)[1]
 				return True if key_var in list_ else False
 		print("indefinido")
-
-
 
 	def set_game_var(self, event):
 		"""Var game setting manager"""
@@ -192,7 +183,7 @@ class AdventureCore(object):
 		return string
 
 	def if_struct_validation(self, params):
-		#If validator
+		# If validator
 		equality_disset_pattern = r'\s('
 		equality_disset_pattern += self.check_notis_regx
 		equality_disset_pattern += self.check_is_regx
@@ -229,7 +220,6 @@ class AdventureCore(object):
 
 		return return_status  # True | False
 
-
 	def load_call_function(self, string):
 		"""Load a stage (& instruction)"""
 		load_stage = re.findall(self.load_function, string)
@@ -238,23 +228,23 @@ class AdventureCore(object):
 
 	def interpret_instruction(self, inst_type, content):
 		"""Process instruction"""
-		if(inst_type == ':'):  # asign var or call function
+		if(inst_type == ':'):  # asign varaible
 			self.set_game_var(content)
-		if(inst_type == '&'):
+		if(inst_type == '&'):  # call scene
 			self.load_call_function(content)
-		elif(inst_type == ''):
+		elif(inst_type == ''):  # string
 			self.string_manager(content)
-		elif(inst_type == 'END'):
+		elif(inst_type == 'END'):  # end game
 			self.finish_adventure()
-		elif(inst_type == 'STATUS'):
+		elif(inst_type == 'STATUS'):  # return status message
 			self.set_status_message(content)
 		return False
 
 	def process_code_line(self, line):
+		"""Process a line code"""
 		if(line == ''):  # empty line
 			return False, False
 		line = line.strip()
-		"""Process code line"""
 		ins_sign = re.match(self.instruction_types, line)
 		sign, content = False, False
 		if(ins_sign):
@@ -267,6 +257,7 @@ class AdventureCore(object):
 		return sign, content
 
 	def interpret_block_code(self, code):
+		"""Analyze and execute block of code from a file"""
 		if_index = {}  # tab level
 		min_lvl = False
 		for line in code.split('\n'):
@@ -311,7 +302,8 @@ class AdventureCore(object):
 		print(f"[+]Loading {full_name[-10:]}...")
 		parser_content = self.parser_stage_file(full_name)
 		if(parser_content is False):
-			self.dprint("[!]Error to load stage.", ":everprint")
+			self.dprint(
+				"[!]Error to load stage, invalid content or empty file", ":everprint")
 			return False
 		self.reset_game_actions()  # reset availibles actions
 		self.current_stage = stage_name
@@ -324,6 +316,8 @@ class AdventureCore(object):
 				self.interpret_block_code(block[2])
 				if(self.game_vars.get('stage_name')):
 					self.current_stage = self.game_vars['stage_name']
+				if(self.game_vars.get('adventure_name')):
+					self.adventure_name = self.game_vars['adventure_name']
 			# #LOAD_AGAIN{}
 			if self.current_stage in self.stage_history:
 				"""If loaded again"""
@@ -337,14 +331,13 @@ class AdventureCore(object):
 			# !ACTION{}
 			if(type_event[0] == '!'):
 				# Register actions
-				print("Registring:",type_event, block[2] )
+				print("Registring:", type_event, block[2])
 				self.game_actions[block[0][1:].lower().strip()] = block[2]
 		self.dprint(f"\n[+]Stage {stage_name} loaded. {len(self.game_actions)} actions loaded.", ':everprint')
 		self.stage_history.append(self.current_stage)
 		return True
 
-
-	def load_adventure(self, adventure_dir, stage_name):
+	def open_adventure(self, adventure_dir, stage_name):
 		"""Load adventure and initialize game vars (for GUI)"""
 		if(self.in_game):
 			return False
@@ -355,7 +348,7 @@ class AdventureCore(object):
 		self.current_adventure_dir = adventure_dir
 		return True if self.load_stage_file(stage_name) else False
 
-	def exec_action(self, cmd):
+	def execute_action(self, cmd):
 		print(f"\nExecuting: {cmd}")
 		if(self.game_actions.get(cmd)):
 			self.output_buffer = []
@@ -364,12 +357,13 @@ class AdventureCore(object):
 		return False
 
 	def finish_adventure(self):
+		"""Finish the current adventure"""
 		self.in_game = False
 
 	def reset_game_actions(self):
+		"""Reset game actions"""
 		self.dprint("[+]Game actions reseted")
 		self.game_actions = {}
-
 
 	def test_c(self):
 		def test():
@@ -378,25 +372,24 @@ class AdventureCore(object):
 
 	def set_status_message(self, content):
 		self.dprint("[+]Setting status message:", content)
-		status_message = re.split(self.custom_instruction.format('STATUS'), content)
+		status_message = re.split(
+			self.custom_instruction.format('STATUS'), content)
 		if(status_message):
 			self.game_status_message = status_message[0]
 
 	def loopGame(self):
 		# test loop
 		self.DEBUG_INFO = True
-		self.current_adventure_dir = 'C:\\Users\\Guillermo\\Desktop\\Adventure Creator\\Adventure-Writter\\test_adventure'
-		self.load_stage_file('habitacion0')  # start
+		self.current_adventure_dir = ''
+		self.load_stage_file('start')  # start
 		self.test_c()
 		while True:
 			action = input(">")
 			if(self.game_actions.get(action)):
-				self.exec_action(self.game_actions[action])
+				self.execute_action(self.game_actions[action])
 			else:
 				print(self.game_status_message)
 				print("You cant do that")
-
-
 
 
 if __name__ == '__main__':
