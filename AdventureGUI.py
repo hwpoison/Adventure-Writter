@@ -1,12 +1,14 @@
-import time
 import os
+import time
 from tkinter import *
 from AdventureCore import *
 from PIL import Image, ImageTk
 from tkinter import messagebox, filedialog, font
+from tkinterhtml import HtmlFrame
 
 __autor__ = "srbill1996"
 __version__ = "1.0"
+
 APP_NAME = f"Adventure Writter [{__version__}]"
 # Misc test
 ABOUT_TEXT = f"Creado por {__autor__}\n\n\nhttps://netixzen.blogspot.com.ar/\n2019"
@@ -33,8 +35,8 @@ ABOUT_TITLE = "Acerca..."
 
 class GameInterface():
 	"""
-	===Text Box=====
-	===UserInput====
+	===Text Box===== self.textBox
+	===UserInput==== self.userEntry
 	"""
 
 	def __init__(self, window):
@@ -45,7 +47,7 @@ class GameInterface():
 		self.sbvCurrentStatus = StringVar()
 		self.init_user_interface()
 		self.frame.pack()
-
+		self.adventure.DEBUG_INFO = True
 	def init_user_interface(self):
 		# TextBox Area
 		scrollbar = Scrollbar(self.frame)
@@ -58,9 +60,8 @@ class GameInterface():
 		self.textBox.config(state=DISABLED, wrap="word")
 		scrollbar.config(command=self.textBox.yview)
 		scrollbar.pack(side=RIGHT, fill=Y)
-
 		# Font styles
-		self.textBox.tag_config('userInput', font=('times new roman', 15))
+		self.textBox.tag_config('userInput', foreground='#4B1160',font=('times new roman', 16))
 		self.textBox.tag_config('failAction', font=(
 			'times new roman', 16), foreground='red')
 		self.textBox.tag_config('adventureText', font=('times new roman', 16))
@@ -75,8 +76,10 @@ class GameInterface():
 		self.textBox.pack(padx=10)
 		self.userEntry.pack(padx=10, pady=10, side=LEFT)
 		self.userEntry.focus_set()
-		self.frame.after(100, lambda: self.animation(self.userEntry))
-		self.frame.after(100, lambda: self.animation(self.textBox))
+		self.userEntry['border'] = 3
+		self.textBox['border'] = 3
+		# self.frame.after(100, lambda: self.animation(self.userEntry))
+		# self.frame.after(100, lambda: self.animation(self.textBox))
 
 	def editTextBox(self):
 		# this fragment is a joke xD
@@ -118,7 +121,7 @@ class GameInterface():
 	def getUserInput(self):
 		action_text = self.getUserInputContent()
 		self.clearUserInput()
-		self.updateScreen(['>' + action_text], 'userInput')
+		self.updateScreen([action_text.capitalize()], 'userInput')
 		return action_text
 
 	def enterAction(self):
@@ -132,7 +135,7 @@ class GameInterface():
 	def animation(self, elemento):
 		for count in range(3):
 			time.sleep(0.1)
-			elemento['border'] = elemento['border'] + count
+			elemento['border'] = elemento['border'] + count 
 			elemento.update()
 
 	def load_image(self, image_name):
@@ -143,7 +146,7 @@ class GameInterface():
 
 class GameGUI(GameInterface):
 	"""
-			Root Window
+			Root Window self.main_window
 			====MenuBar====
 			<Game Interface>
 			==StatusBar====
@@ -160,7 +163,7 @@ class GameGUI(GameInterface):
 		self.init_menubar()
 		self.init_statusbar()
 		self.init_window()
-		# self.load_test()
+		self.load_test()
 		self.main_window.mainloop()
 
 	def close_window(self):
@@ -214,13 +217,11 @@ class GameGUI(GameInterface):
 	def load_test(self):
 		self.is_open = True
 		self.clearScreen()
-
-		self.stage_history = []
-		
+		self.adventure.sentence_processor = WordProcess('spanish_words.json')
+		self.adventure.open_adventure(os.getcwd() + "//test_adventure", "habitacion0")
 		self.updateScreen(self.adventure.output_buffer, 'adventureText')
 		self.userEntry.config(state=NORMAL)
 		self.updateStatusVars()
-		print("Insertando")
 
 	def load_stage_file(self, stage):
 		"""overloading for update gui vars"""
@@ -240,6 +241,7 @@ class GameGUI(GameInterface):
 			else:
 				self.adventure.in_game = False
 				self.is_open = False
+		self.clearScreen()
 		get_dir = str(filedialog.askopenfile().name)
 		adv_full_dir = re.findall(r'(.*)/(\w+)\.adventure+', get_dir)
 		if(adv_full_dir):
@@ -256,7 +258,9 @@ class GameGUI(GameInterface):
 			messagebox.showerror(MSG_ERROR_TITLE, MSG_INCOMPATIBLE_FILE)
 
 	def reload_adventure(self):
-		self.load_test()
+		if(self.is_open and self.adventure.in_game):
+			self.adventure.in_game = False
+			self.load_test()
 		print("reloaded at", time.strftime("%H:%M:%S %p"))
 
 	def init_statusbar(self):

@@ -6,29 +6,27 @@
 Abres la puerta, entras y ¡PUM!  de un golpazo se cierra detras tuyo!
 Te sorprendes, en esta habitación no hay nada, pero de repente empiezas a escuchar un
 sonido, miras y de repente se enciende un contador en la pared!
-Quedan 10 segundos! 
 
 }
 
 
-!volver{
+!volver {
 ?puerta1.trabada is True
 	No puedes, la puerta parece estar atrancada.
 ?else
 	&LOAD habitacion0
 }
 
-!mirar la nada{
+!mirar la nada {
 	Aprecias el vacio existencial...
 }
 
-!patear puerta{
+!patear puerta
+{
 	?puerta1.destruida is True
 		La puerta ya está destrozada.
 	?else
-		Asustado, espantado, golpeas una y otra vez la puerta
-		con un par de patadas. Tras varios intentos, la puerta
-		se abre y puedes volver a la habitacion inicial.
+		Asustado, espantado, golpeas una y otra vez la puertacon un par de patadas. Tras varios intentos, la puerta se abre y puedes volver a la habitacion inicial.
 		:puerta1.destruida = True
 		:puerta1.trabada = False
 }

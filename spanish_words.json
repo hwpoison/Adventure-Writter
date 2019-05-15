@@ -1,0 +1,25 @@
+
+{
+	"verb":{
+		"mirar":["miro", "miras", "miran", "miramos"],
+		"agarrar":["agarro","agarras", "agarran", "agarramos"],
+		"tomar":["tomo", "tomas", "toman", "tomamos"],
+		"observar":["observo", "observas", "observan", "observamos"],
+		"abrir":["abro", "abres", "abren", "abrimos"],
+		"hablar":["hablo", "hablas", "hablan", "hablamos"],
+		"pasar":["paso", "pasas", "pasan", "pasamos"],
+		"patear":["pateo", "pateas", "patean", "pateamos"]
+	},
+	"article":{
+		"la":["femenino",   "singular"],
+		"las":["femenino", "plural"],
+		"el":["masculino", "singular"],
+		"los":["masculino","plural"]
+	},                                                                                                                                                                                                                                                                   
+	"item":{
+		"puerta":["femenino"],
+		"techo":["masculino"],
+		"casa":["femenino"],
+		"habitacion":["femenino"]
+	}
+}
