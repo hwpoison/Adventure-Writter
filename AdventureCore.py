@@ -95,7 +95,7 @@ class AdventureCore(object):
 		self.check_is_regx = r'is|es|'
 		self.check_notis_regx = r'not is|is not|'
 		self.check_in_regx = r'|in|en'
-		self.code_blocks_regx = r'([#\!])([a-zA-Z0-9_-\|-\s-]*)\{(.*?)\}'
+		self.code_blocks_regx = r'([#\!])([áéíóúa-zA-Z0-9_-\|-\s-]*)\{(.*?)\}'
 		self.var_scope_value_regx = r'\$(.*?)\$'
 		self.var_scope_regx = r'(\$.*?\$)'
 		self.file_dir_resolution = r'(.*)\\(\w+)\.adventure'
@@ -235,7 +235,7 @@ class AdventureCore(object):
 
 		return return_status  # True | False
 
-	def load_call_function(self, string):
+	def stage_call_function(self, string):
 		"""Load a stage (& instruction)"""
 		load_stage = re.findall(self.load_function, string)
 		if(load_stage):
@@ -293,6 +293,7 @@ class AdventureCore(object):
 		code_block = re.compile(self.code_blocks_regx,
 								re.MULTILINE | re.DOTALL)
 		blocks = code_block.findall(stage_content)
+		print(blocks)
 		if(blocks):
 			return blocks
 		return False
@@ -302,7 +303,7 @@ class AdventureCore(object):
 		if(inst_type == ':'):  # asign varaible
 			self.set_game_var(content)
 		if(inst_type == '&'):  # call scene
-			self.load_call_function(content)
+			self.stage_call_function(content)
 		elif(inst_type == ''):  # string
 			self.string_manager(content)
 		elif(inst_type == 'END'):  # end game
@@ -425,12 +426,11 @@ class AdventureCore(object):
 		self.current_adventure_dir = ''
 		self.open_adventure(os.getcwd() + "//test_adventure", "habitacion0")
 		self.sentence_processor = WordProcess('spanish_words.json')
-		self.execute_action("mirar el techo")
-		print(self.game_vars)
 		while True:
 			action = input(">")
+			action = "tomar té"
 			if(self.game_actions_names.get(action)):
-				self.execute_action(self.game_actions_names[action])
+				self.execute_action(action)
 			else:
 				print(self.game_status_message)
 				print("You cant do that")

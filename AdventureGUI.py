@@ -11,9 +11,10 @@ __version__ = "1.0"
 
 APP_NAME = f"Adventure Writter [{__version__}]"
 # Misc test
-ABOUT_TEXT = f"Creado por {__autor__}\n\n\nhttps://netixzen.blogspot.com.ar/\n2019"
+ABOUT_TEXT = f"Creado por {__autor__}\n\n\nhttps://netixzen.blogspot.com.ar/\nPython 3.6/Tkinter 8.6☺2019"
 TXT_ADVENTURE_END = 'La aventura ha terminado.'
 TXT_CURRENT_STAGE = 'Escenario actual: '
+HELP_TITLE = "Ayuda"
 # Button text
 MENU_HELP = "Ayuda"
 MENU_FILE = "Archivo"
@@ -37,6 +38,8 @@ class GameInterface():
 	"""
 	===Text Box===== self.textBox
 	===UserInput==== self.userEntry
+
+	self.animatedText : Animated print text (disabled)
 	"""
 
 	def __init__(self, window):
@@ -48,6 +51,8 @@ class GameInterface():
 		self.init_user_interface()
 		self.frame.pack()
 		self.adventure.DEBUG_INFO = True
+		self.animatedText = True
+
 	def init_user_interface(self):
 		# TextBox Area
 		scrollbar = Scrollbar(self.frame)
@@ -61,7 +66,7 @@ class GameInterface():
 		scrollbar.config(command=self.textBox.yview)
 		scrollbar.pack(side=RIGHT, fill=Y)
 		# Font styles
-		self.textBox.tag_config('userInput', foreground='#4B1160',font=('times new roman', 16))
+		self.textBox.tag_config('userInput', foreground='#4B1160',font=('times new roman bold', 16))
 		self.textBox.tag_config('failAction', font=(
 			'times new roman', 16), foreground='red')
 		self.textBox.tag_config('adventureText', font=('times new roman', 16))
@@ -114,14 +119,23 @@ class GameInterface():
 
 	@editTextBox
 	def updateScreen(self, text_list, tag=''):
-		self.textBox.insert(END, '\n'.join(
-			[line for line in text_list]) + '\n', tag)
+		text_line =  '\n'.join([line for line in text_list])
+		if self.animatedText is False:
+			self.textBox.insert(END,text_line, tag)
+		else:
+			for fragment in text_line.split(' '):
+				time.sleep(0.01) #print animation velocity in ms
+				self.textBox.insert(END, fragment + ' ', tag)
+				self.textBox.update()
+				self.textBox.see('end')
+
+		self.textBox.insert(END, '\n')
 		self.textBox.see('end')
 
 	def getUserInput(self):
 		action_text = self.getUserInputContent()
 		self.clearUserInput()
-		self.updateScreen([action_text.capitalize()], 'userInput')
+		self.updateScreen(['[' + action_text.capitalize() + ']'], 'userInput')
 		return action_text
 
 	def enterAction(self):
@@ -132,11 +146,11 @@ class GameInterface():
 			self.updateScreen(['-No puedes hacer eso!'], 'failAction')
 		self.updateStatusVars()
 
-	def animation(self, elemento):
+	def animation(self):
 		for count in range(3):
-			time.sleep(0.1)
-			elemento['border'] = elemento['border'] + count 
-			elemento.update()
+			time.sleep(0.01)
+			self.updateScreen(["algo"], scape='')
+			self.textBox.update()
 
 	def load_image(self, image_name):
 		imagen = Image.open(image_name)
@@ -202,7 +216,7 @@ class GameGUI(GameInterface):
 
 		# Help cascade
 		help_menu = Menu(menuBar, tearoff=0)
-		help_menu.add_command(label=MENU_I_NEED_HELP)
+		help_menu.add_command(label=MENU_I_NEED_HELP, command=lambda: self.help())
 		help_menu.add_separator()
 		help_menu.add_command(label=MENU_ABOUT, command=self.about)
 
@@ -214,6 +228,9 @@ class GameGUI(GameInterface):
 	def about(self):
 		About(self.main_window)
 
+	def help(self):
+		Help(self.main_window)
+
 	def load_test(self):
 		self.is_open = True
 		self.clearScreen()
@@ -222,14 +239,6 @@ class GameGUI(GameInterface):
 		self.updateScreen(self.adventure.output_buffer, 'adventureText')
 		self.userEntry.config(state=NORMAL)
 		self.updateStatusVars()
-
-	def load_stage_file(self, stage):
-		"""overloading for update gui vars"""
-		if(adventure.load_stage_file(stage)):
-			self.clearScreen()
-			self.updateStatusVars()
-			return True
-		return False
 
 	def open_adventure(self):
 		"""open adventure in gui"""
@@ -248,7 +257,7 @@ class GameGUI(GameInterface):
 			file_dir, file_name = adv_full_dir[0]
 			if(self.adventure.open_adventure(file_dir, file_name)):
 				if(self.adventure.adventure_name):
-					self.main_window.title(self.adventure_name)
+					self.main_window.title(self.adventure.adventure_name)
 				self.updateScreen(self.adventure.output_buffer)
 				self.is_open = True
 				self.userEntry.config(state=NORMAL)
@@ -299,6 +308,30 @@ class About():
 		about_text.pack()
 		top.grab_set()  # toplevel
 		top.focus_force()  # force focus window
+
+class Help():
+	def __init__(self, parent):
+		top = self.top = Toplevel(parent)
+		top.iconbitmap('icon.ico')
+		top.title(HELP_TITLE)
+		top.geometry("650x200")
+		top.resizable(False, False)
+		top.deiconify()
+
+		textHelp = Text(top)
+		textHelp.tag_config("title", font=('Czar', 17))
+		textHelp.tag_config("text", font=('Arial', 13))
+		helpTitle = "\t\tBienvenido a Adventure Writter!"
+		helpText = "\nUn software para creación de aventuras conversacionales"
+		helpText+= "de una manera rapida y personalizable."
+		helpText+= ""
+		textHelp.insert("end", helpTitle, 'title')
+		textHelp.insert("end", helpText, "text")
+		textHelp.pack()
+		textHelp.config(state="disabled", wrap='word')
+		top.grab_set()  # toplevel
+		top.focus_force()  # force focus window
+
 
 
 if __name__ == '__main__':

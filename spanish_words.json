@@ -8,7 +8,8 @@
 		"abrir":["abro", "abres", "abren", "abrimos"],
 		"hablar":["hablo", "hablas", "hablan", "hablamos"],
 		"pasar":["paso", "pasas", "pasan", "pasamos"],
-		"patear":["pateo", "pateas", "patean", "pateamos"]
+		"patear":["pateo", "pateas", "patean", "pateamos"],
+		"desayunar":["desayuno", "desayunas", "desayunan", "desayunamos"]
 	},
 	"article":{
 		"la":["femenino",   "singular"],
