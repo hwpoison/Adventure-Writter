@@ -1,7 +1,7 @@
 import os
 import time
 from tkinter import *
-from AdventureCore import *
+from AdventureWritter.adventureCore import AdventureCore
 from PIL import Image, ImageTk
 from tkinter import messagebox, filedialog, font
 from tkinterhtml import HtmlFrame
@@ -44,6 +44,7 @@ class GameInterface():
 
 	def __init__(self, window):
 		self.adventure = AdventureCore()
+		self.adventure.loadDictionary("spanish_words.json")
 		self.frame = Frame(window)
 		self.userInput = StringVar()
 		self.sbvCurrentStage = StringVar()
@@ -140,7 +141,7 @@ class GameInterface():
 
 	def enterAction(self):
 		user_command = self.getUserInput()
-		if(self.adventure.execute_action(user_command) is True):
+		if(self.adventure.executeAction(user_command) is True):
 			self.updateScreen(self.adventure.output_buffer, 'adventureText')
 		else:
 			self.updateScreen(['-No puedes hacer eso!'], 'failAction')
@@ -234,8 +235,7 @@ class GameGUI(GameInterface):
 	def load_test(self):
 		self.is_open = True
 		self.clearScreen()
-		self.adventure.sentence_processor = WordProcess('spanish_words.json')
-		self.adventure.open_adventure(os.getcwd() + "//test_adventure", "habitacion0")
+		self.adventure.openAdventure('habitacion0' , adventure_dir=os.getcwd() + "\\test_adventure")
 		self.updateScreen(self.adventure.output_buffer, 'adventureText')
 		self.userEntry.config(state=NORMAL)
 		self.updateStatusVars()
@@ -255,7 +255,7 @@ class GameGUI(GameInterface):
 		adv_full_dir = re.findall(r'(.*)/(\w+)\.adventure+', get_dir)
 		if(adv_full_dir):
 			file_dir, file_name = adv_full_dir[0]
-			if(self.adventure.open_adventure(file_dir, file_name)):
+			if(self.adventure.openAdventure(file_name, adventure_dir=file_dir)):
 				if(self.adventure.adventure_name):
 					self.main_window.title(self.adventure.adventure_name)
 				self.updateScreen(self.adventure.output_buffer)

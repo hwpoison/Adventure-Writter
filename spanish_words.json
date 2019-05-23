@@ -1,15 +1,11 @@
 
 {
 	"verb":{
-		"mirar":["miro", "miras", "miran", "miramos"],
-		"agarrar":["agarro","agarras", "agarran", "agarramos"],
-		"tomar":["tomo", "tomas", "toman", "tomamos"],
-		"observar":["observo", "observas", "observan", "observamos"],
-		"abrir":["abro", "abres", "abren", "abrimos"],
-		"hablar":["hablo", "hablas", "hablan", "hablamos"],
-		"pasar":["paso", "pasas", "pasan", "pasamos"],
-		"patear":["pateo", "pateas", "patean", "pateamos"],
-		"desayunar":["desayuno", "desayunas", "desayunan", "desayunamos"]
+		"mirar":["mirar", "miro"],
+		"levantar":["levantarse", "levanto"],
+		"desayunar":["desayunar", "desayuno"],
+		"tomar":["tomar", "tomo"],
+		"abrir":["abrir", "abro"]
 	},
 	"article":{
 		"la":["femenino",   "singular"],
@@ -17,10 +13,16 @@
 		"el":["masculino", "singular"],
 		"los":["masculino","plural"]
 	},                                                                                                                                                                                                                                                                   
-	"item":{
-		"puerta":["femenino"],
+	"sustantive":{
+		"puerta":["puerta", "femenino"],
 		"techo":["masculino"],
 		"casa":["femenino"],
-		"habitacion":["femenino"]
+		"habitacion":["femenino"],
+		"café":["masculino"],
+		"té":["masculino"]
+	},
+	"pronoun":{
+		"me":["personal"]
 	}
+	
 }
