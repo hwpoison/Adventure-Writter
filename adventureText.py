@@ -15,10 +15,13 @@ class Game(AdventureCore):
 		super(Game, self).__init__()
 
 	def main(self):
-
 		self.loadDictionary("spanish_words.json")
 		self.openAdventure("habitacion0", "test_adventure/")
-		while self.in_game:
+		while True:
+			for fragment in self.output_buffer:
+				print(fragment)
+			if(self.in_game is False):
+				return False
 			action = input(">")
 			if(action):
 				self.executeAction(action)

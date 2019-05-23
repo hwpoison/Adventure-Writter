@@ -61,7 +61,7 @@ class AdventureCore(adventureInterpreter):
 
 	def executeAction(self, sentence):
 		# agregar or |
-		print(f"\n[+]Executing action: {sentence}")
+		dprint(f"\n[+]Executing action: {sentence}")
 		sentence = sentence.lower()
 		if(self.game_actions_names.get(sentence)):
 			self.clear_output_buffer()
