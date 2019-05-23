@@ -1,10 +1,9 @@
 import os
 import time
 from tkinter import *
-from AdventureWritter.adventureCore import AdventureCore
 from PIL import Image, ImageTk
 from tkinter import messagebox, filedialog, font
-from tkinterhtml import HtmlFrame
+from AdventureWritter.adventureCore import AdventureCore
 
 __autor__ = "srbill1996"
 __version__ = "1.0"
