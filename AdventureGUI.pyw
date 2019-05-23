@@ -223,10 +223,12 @@ class GameGUI(GameInterface):
 		Help(self.main_window)
 
 	def load_test(self):
-		self.is_open = True
+		self.is_open = False
 		self.clearScreen()
-		self.adventure.openAdventure('habitacion0' , adventure_dir=os.getcwd() + "\\test_adventure")
-		self.updateScreen(self.adventure.output_buffer, 'adventureText')
+		adv_test_dir = os.getcwd() + '/test_adventure/habitacion0.adventure'
+		if(self.current_adventure is None):
+			self.current_adventure = adv_test_dir
+		self.open_adventure(reload=True)
 		self.userEntry.config(state=NORMAL)
 		self.updateStatusVars()
 
@@ -242,11 +244,11 @@ class GameGUI(GameInterface):
 				self.is_open = False
 		self.clearScreen()
 		if(reload):
-			get_dir = self.adv_dir
+			get_dir = self.current_adventure
 		else:
 			get_dir = str(filedialog.askopenfile().name)
 		adv_full_dir = re.findall(r'(.*)/(\w+)\.adventure+', get_dir)
-		self.current_adventure = adv_full_dir
+		self.current_adventure = get_dir
 		if(adv_full_dir):
 			file_dir, file_name = adv_full_dir[0]
 			if(self.adventure.openAdventure(file_name, adventure_dir=file_dir)):
@@ -258,16 +260,16 @@ class GameGUI(GameInterface):
 			else:
 				messagebox.showerror(gui_text['menu_help'], gui_text['msg_file_content_error'])
 		else:
-			messagebox.showerror(gui_text['menu_error_title'], gui_text['msg_incompatible_file'])
+			messagebox.showerror(gui_text['msg_error_title'], gui_text['msg_incompatible_file'])
 
 	def reload_adventure(self):
-		if(self.is_open and self.adventure.in_game):
-			self.adventure.finishAdventure()
+		if(self.is_open):
+			if(self.adventure.in_game):
+				self.adventure.finishAdventure()
 			if(self.is_test_context):
 				self.load_test()
 			else:
 				self.open_adventure(reload=True)
-
 		print("adventure reloaded at", time.strftime("%H:%M:%S %p"))
 
 	def init_statusbar(self):
