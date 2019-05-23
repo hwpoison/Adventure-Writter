@@ -14,6 +14,7 @@ class adventureInterpreter():
 	def reset_vars(self):
 		self.game_vars = {}
 		self.output_buffer = []
+		self.stage_history = []
 		self.game_status_message = None
 
 	def clear_output_buffer(self):
@@ -125,7 +126,7 @@ class adventureInterpreter():
 		elif(inst_type == ''):  # string
 			self.string_manager(content)
 		elif(inst_type == 'END'):  # end game
-			self.finish_adventure()
+			self.finishAdventure()
 		elif(inst_type == 'STATUS'):  # return status message
 			self.set_status_message(content)
 		return False

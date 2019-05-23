@@ -1,5 +1,11 @@
+import configparser
+import os
 
-DEBUG_INFO = True
+# dir_ = os.path.dirname(os.path.abspath(__file__))
+debug = configparser.ConfigParser()
+debug.read('config.ini')
+
+DEBUG_INFO = True if debug['DEBUG'].getboolean('debug') == 'True' else False
 
 def dprint(*args):
 	# debug message print

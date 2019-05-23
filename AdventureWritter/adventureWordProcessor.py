@@ -9,9 +9,9 @@ class adventureWordProcessor():
 	def load_dictionary(self, filename):
 		try:
 			self.dictionary = json.loads(open(filename, 'r').read())
-			print(f"[+]Dictionary {filename} loaded.")
+			dprint(f"[+]Dictionary {filename} loaded.")
 		except FileNotFoundError:
-			print(f"[-]Word dictionary {filename} not found")
+			dprint(f"[-]Word dictionary {filename} not found")
 		return {}
 
 	def process(self, sentence, actions=[]):

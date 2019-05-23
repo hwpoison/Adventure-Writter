@@ -1,5 +1,6 @@
 import os
 import time
+import configparser
 from tkinter import *
 from PIL import Image, ImageTk
 from tkinter import messagebox, filedialog, font
@@ -9,29 +10,12 @@ __autor__ = "srbill1996"
 __version__ = "1.0"
 
 APP_NAME = f"Adventure Writter [{__version__}]"
-# Misc test
 ABOUT_TEXT = f"Creado por {__autor__}\n\n\nhttps://netixzen.blogspot.com.ar/\nPython 3.6/Tkinter 8.6☺2019"
-TXT_ADVENTURE_END = 'La aventura ha terminado.'
-TXT_CURRENT_STAGE = 'Escenario actual: '
-HELP_TITLE = "Ayuda"
-# Button text
-MENU_HELP = "Ayuda"
-MENU_FILE = "Archivo"
-MENU_OPEN = "Abrir"
-MENU_VIEW = "Ver"
-MENU_ABOUT = "Acerca de..."
-MENU_CLEAR_SCREEN = "Limpiar pantalla"
-MENU_I_NEED_HELP = "Necesito ayuda"
-MENU_RELOAD = "Recargar aventura"
-MENU_EXIT = "Salir"
-# Message text
-MSG_ERROR_TITLE = "Error"
-MSG_EXIT = "Deseas salir?"
-MSG_OPEN_ANOTHER_ADVENTURE = 'Ya hay una aventura en progreso, deseas cerrarla?'
-MSG_FILE_CONTENT_ERROR = "El contenido del archivo no se reconoce."
-MSG_INCOMPATIBLE_FILE = "Selecciona un archivo compatible"
 
-ABOUT_TITLE = "Acerca..."
+config = configparser.ConfigParser()
+config.read("config.ini")
+gui_text = config['TEXT']
+
 
 class GameInterface():
 	"""
@@ -43,7 +27,7 @@ class GameInterface():
 
 	def __init__(self, window):
 		self.adventure = AdventureCore()
-		self.adventure.loadDictionary("spanish_words.json")
+		
 		self.frame = Frame(window)
 		self.userInput = StringVar()
 		self.sbvCurrentStage = StringVar()
@@ -51,7 +35,11 @@ class GameInterface():
 		self.init_user_interface()
 		self.frame.pack()
 		self.adventure.DEBUG_INFO = True
-		self.animatedText = True
+		self.adventure.loadDictionary(config['GUI']['dictionary'])
+		if config['GUI']['animated_text'] == 'True':
+			self.animatedText = True 
+		else:
+			self.animatedText = False
 
 	def init_user_interface(self):
 		# TextBox Area
@@ -97,14 +85,14 @@ class GameInterface():
 	def updateStatusVars(self):
 		if self.adventure.current_stage:
 			self.sbvCurrentStage.set(
-				TXT_CURRENT_STAGE + str(self.adventure.current_stage))
+				gui_text['txt_current_stage'] + str(self.adventure.current_stage))
 		if self.adventure.game_status_message:
 			self.sbvCurrentStatus.set(self.adventure.game_status_message)
 		else:
 			self.sbvCurrentStatus.set('')
 		if(self.adventure.in_game is False):
 			self.sbvCurrentStage.set('')
-			self.sbvCurrentStatus.set(TXT_ADVENTURE_END)
+			self.sbvCurrentStatus.set(gui_text['txt_adventure_end'])
 			self.userEntry.config(state=DISABLED)
 
 	def getUserInputContent(self):
@@ -173,15 +161,18 @@ class GameGUI(GameInterface):
 		self.HEIGHT = 340
 		self.POSX = 300
 		self.POSY = 300
-		self.is_open = False
 		self.init_menubar()
 		self.init_statusbar()
 		self.init_window()
-		self.load_test()
+		self.is_open = False
+		self.is_test_context = True
+		self.current_adventure = None
+		if(self.is_test_context):
+			self.load_test()
 		self.main_window.mainloop()
 
 	def close_window(self):
-		exit = messagebox.askyesno(MENU_EXIT, MSG_EXIT)
+		exit = messagebox.askyesno(gui_text['menu_help'], gui_text['msg_exit'])
 		if(exit):
 			self.main_window.quit()
 
@@ -197,14 +188,14 @@ class GameGUI(GameInterface):
 		menuBar = Menu(self.main_window)
 		# File Cascade
 		file = Menu(menuBar, tearoff=0)
-		file.add_command(label=MENU_OPEN,
+		file.add_command(label=gui_text['menu_open'],
 						 command=self.open_adventure,
 						 accelerator="Ctrl+O")
-		file.add_command(label=MENU_VIEW,
+		file.add_command(label=gui_text['menu_view'],
 						 command=self.getUserInput)
-		file.add_command(label=MENU_CLEAR_SCREEN,
+		file.add_command(label=gui_text['menu_clear_screen'],
 						 command=lambda: self.clearScreen())
-		file.add_command(label=MENU_RELOAD,
+		file.add_command(label=gui_text['menu_reload'],
 						 command=lambda: self.reload_adventure(),
 						 accelerator="Ctrl+R")
 		self.main_window.bind_all(
@@ -212,17 +203,17 @@ class GameGUI(GameInterface):
 		self.main_window.bind_all(
 			"<Control-o>", lambda x: self.open_adventure())
 		file.add_separator()
-		file.add_command(label=MENU_EXIT, command=self.close_window)
+		file.add_command(label=gui_text['menu_exit'], command=self.close_window)
 
 		# Help cascade
 		help_menu = Menu(menuBar, tearoff=0)
-		help_menu.add_command(label=MENU_I_NEED_HELP, command=lambda: self.help())
+		help_menu.add_command(label=gui_text['menu_i_need_help'], command=lambda: self.help())
 		help_menu.add_separator()
-		help_menu.add_command(label=MENU_ABOUT, command=self.about)
+		help_menu.add_command(label=gui_text['menu_about'], command=self.about)
 
 		# Add cascades
-		menuBar.add_cascade(label=MENU_FILE, menu=file)
-		menuBar.add_cascade(label=MENU_HELP, menu=help_menu)
+		menuBar.add_cascade(label=gui_text['menu_file'], menu=file)
+		menuBar.add_cascade(label=gui_text['menu_help'], menu=help_menu)
 		self.main_window.config(menu=menuBar)
 
 	def about(self):
@@ -239,19 +230,23 @@ class GameGUI(GameInterface):
 		self.userEntry.config(state=NORMAL)
 		self.updateStatusVars()
 
-	def open_adventure(self):
+	def open_adventure(self, reload=False):
 		"""open adventure in gui"""
 		if(self.is_open or self.adventure.in_game):
 			progress = messagebox.askyesno(
-				'Atención', MSG_OPEN_ANOTHER_ADVENTURE)
+				'Atención', gui_text['msg_open_another_adventure'])
 			if(progress is False):
 				return False
 			else:
 				self.adventure.in_game = False
 				self.is_open = False
 		self.clearScreen()
-		get_dir = str(filedialog.askopenfile().name)
+		if(reload):
+			get_dir = self.adv_dir
+		else:
+			get_dir = str(filedialog.askopenfile().name)
 		adv_full_dir = re.findall(r'(.*)/(\w+)\.adventure+', get_dir)
+		self.current_adventure = adv_full_dir
 		if(adv_full_dir):
 			file_dir, file_name = adv_full_dir[0]
 			if(self.adventure.openAdventure(file_name, adventure_dir=file_dir)):
@@ -261,15 +256,19 @@ class GameGUI(GameInterface):
 				self.is_open = True
 				self.userEntry.config(state=NORMAL)
 			else:
-				messagebox.showerror(MSG_ERROR_TITLE, MSG_FILE_CONTENT_ERROR)
+				messagebox.showerror(gui_text['menu_help'], gui_text['msg_file_content_error'])
 		else:
-			messagebox.showerror(MSG_ERROR_TITLE, MSG_INCOMPATIBLE_FILE)
+			messagebox.showerror(gui_text['menu_error_title'], gui_text['msg_incompatible_file'])
 
 	def reload_adventure(self):
 		if(self.is_open and self.adventure.in_game):
-			self.adventure.in_game = False
-			self.load_test()
-		print("reloaded at", time.strftime("%H:%M:%S %p"))
+			self.adventure.finishAdventure()
+			if(self.is_test_context):
+				self.load_test()
+			else:
+				self.open_adventure(reload=True)
+
+		print("adventure reloaded at", time.strftime("%H:%M:%S %p"))
 
 	def init_statusbar(self):
 		self.sbCurrentStage = Label(self.main_window, bd=1, relief=SUNKEN, anchor=W,
@@ -287,7 +286,7 @@ class About():
 	def __init__(self, parent):
 		top = self.top = Toplevel(parent)
 		top.iconbitmap('icon.ico')
-		top.title(ABOUT_TITLE)
+		top.title(gui_text['about_title'])
 		top.geometry("650x200")
 		top.resizable(False, False)
 		top.deiconify()
@@ -312,7 +311,7 @@ class Help():
 	def __init__(self, parent):
 		top = self.top = Toplevel(parent)
 		top.iconbitmap('icon.ico')
-		top.title(HELP_TITLE)
+		top.title(gui_text['help_title'])
 		top.geometry("650x200")
 		top.resizable(False, False)
 		top.deiconify()
