@@ -5,7 +5,7 @@ class SourceRegex:
     asign_value_regx = r'(.*)\s+(=|add)\s+(.*)'
     load_function = r'(LOAD|CARGAR)\s+(.*)$'
     or_regx = r'or|\|\||\so'
-    and_regx = r'and|&&|y|'  # fix /s x/s
+    and_regx = r'and|&&|'  # fix /s x/s
     check_is_regx = r'is|es|'
     check_notis_regx = r'not is|is not|'
     check_in_regx = r'|in|en'

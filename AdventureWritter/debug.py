@@ -3,9 +3,10 @@ import os
 
 # dir_ = os.path.dirname(os.path.abspath(__file__))
 debug = configparser.ConfigParser()
-debug.read('config.ini')
-
-DEBUG_INFO = True if debug['DEBUG'].getboolean('debug') == 'True' else False
+if(debug.read('config.ini')):
+	DEBUG_INFO = True if debug['DEBUG'].getboolean('debug') == True else False
+else:
+	DEBUG_INFO = False
 
 def dprint(*args):
 	# debug message print

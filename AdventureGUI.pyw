@@ -1,4 +1,5 @@
 import os
+import sys
 import time
 import configparser
 from tkinter import *
@@ -13,9 +14,11 @@ APP_NAME = f"Adventure Writter [{__version__}]"
 ABOUT_TEXT = f"Creado por {__autor__}\n\n\nhttps://netixzen.blogspot.com.ar/\nPython 3.6/Tkinter 8.6☺2019"
 
 config = configparser.ConfigParser()
-config.read("config.ini")
-gui_text = config['TEXT']
-
+if(config.read("config.ini")):
+	gui_text = config['TEXT']
+else:
+	messagebox.showerror("ERROR!", "No se encuentra el archivo de configuración.")
+	sys.exit(-1)
 
 class GameInterface():
 	"""
@@ -54,9 +57,10 @@ class GameInterface():
 		scrollbar.config(command=self.textBox.yview)
 		scrollbar.pack(side=RIGHT, fill=Y)
 		# Font styles
-		self.textBox.tag_config('userInput', foreground='#4B1160',font=('times new roman bold', 16))
-		self.textBox.tag_config('failAction', font=(
-			'times new roman', 16), foreground='red')
+		self.textBox.tag_config('userInput', foreground='#4B1160',
+			font=('times new roman bold', 16))
+		self.textBox.tag_config('failAction', 
+			font=('times new roman', 16), foreground='red')
 		self.textBox.tag_config('adventureText', font=('times new roman', 16))
 
 		# User input area
@@ -254,7 +258,7 @@ class GameGUI(GameInterface):
 			if(self.adventure.openAdventure(file_name, adventure_dir=file_dir)):
 				if(self.adventure.adventure_name):
 					self.main_window.title(self.adventure.adventure_name)
-				self.updateScreen(self.adventure.output_buffer)
+				self.updateScreen(self.adventure.output_buffer, tag='adventureText')
 				self.is_open = True
 				self.userEntry.config(state=NORMAL)
 			else:

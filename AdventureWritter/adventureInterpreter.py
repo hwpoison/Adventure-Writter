@@ -143,6 +143,7 @@ class adventureInterpreter():
 		gate_ops = if_disset.findall(params)  # split gate ops (and, or ...)
 		# split comparation ops (is, is not..)
 		operations = if_disset.split(params)
+		print(operations)
 		actual_gate = None  # and|or
 		return_status = False  # if return status
 		for num, operation in enumerate(operations):
