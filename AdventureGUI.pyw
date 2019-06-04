@@ -17,7 +17,7 @@ config = configparser.ConfigParser()
 if(config.read("config.ini")):
 	gui_text = config['TEXT']
 else:
-	messagebox.showerror("ERROR!", "No se encuentra el archivo de configuración.")
+	messagebox.showerror("ERROR!", vbn)
 	sys.exit(-1)
 
 class GameInterface():
@@ -132,22 +132,22 @@ class GameInterface():
 
 	def enterAction(self):
 		user_command = self.getUserInput()
-		if(self.adventure.executeAction(user_command) is True):
+		execute_action = self.adventure.executeAction(user_command)
+		if(execute_action is True):
 			self.updateScreen(self.adventure.output_buffer, 'adventureText')
+		elif(execute_action is False):
+			self.updateScreen([f"{gui_text['txt_action_once']} {user_command}!"], 'failAction')
 		else:
-			self.updateScreen(['-No puedes hacer eso!'], 'failAction')
+			self.updateScreen([gui_text['txt_you_cant']], 'failAction')
+		
 		self.updateStatusVars()
+		self.showGameImage()
 
 	def animation(self):
 		for count in range(3):
 			time.sleep(0.01)
 			self.updateScreen(["algo"], scape='')
 			self.textBox.update()
-
-	def load_image(self, image_name):
-		imagen = Image.open(image_name)
-		photo = ImageTk.PhotoImage(imagen)
-		return photo
 
 
 class GameGUI(GameInterface):
@@ -187,6 +187,12 @@ class GameGUI(GameInterface):
 		self.main_window.geometry(f'{self.WIDTH}x{self.HEIGHT}+{self.POSX}+{self.POSY}')
 		self.userEntry.bind('<KeyPress-Return>',
 							lambda x: self.enterAction())
+
+	def showGameImage(self):
+		if self.adventure.game_show_image:
+			image_path = self.adventure.file_manager.current_directory + "/" +  self.adventure.game_show_image
+			ImageBox(self.main_window, image_path)
+			self.adventure.game_show_image = None
 
 	def init_menubar(self):
 		menuBar = Menu(self.main_window)
@@ -230,11 +236,13 @@ class GameGUI(GameInterface):
 		self.is_open = False
 		self.clearScreen()
 		adv_test_dir = os.getcwd() + '/test_adventure/habitacion0.adventure'
+		
 		if(self.current_adventure is None):
 			self.current_adventure = adv_test_dir
 		self.open_adventure(reload=True)
 		self.userEntry.config(state=NORMAL)
 		self.updateStatusVars()
+		self.showGameImage()
 
 	def open_adventure(self, reload=False):
 		"""open adventure in gui"""
@@ -336,7 +344,27 @@ class Help():
 		top.grab_set()  # toplevel
 		top.focus_force()  # force focus window
 
+class ImageBox():
+	def __init__(self, parent, imagen, full_screen = False):
+		image_window = self.image_window = Toplevel(parent)
+		self.full_screen = full_screen
+		self.image_window.attributes("-fullscreen", self.full_screen)
+		self.image_window.bind("<Escape>", self.disable_fullscreen)
+		self.image_window.resizable(0,0)
+		image_window.title("...")
+		imagen_show = Image.open(imagen)
+		photo = ImageTk.PhotoImage(imagen_show)
+		label = Label(self.image_window, image=photo)
+		label.image = photo
+		label.pack()
+		image_window.grab_set()
 
+	def disable_fullscreen(self, event=None):
+		self.image_window.attributes("-fullscreen",False)
+
+	def load_image(self, image_name):
+
+		return photo
 
 if __name__ == '__main__':
 	gui = GameGUI()

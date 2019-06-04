@@ -17,16 +17,27 @@ class AdventureCore(adventureInterpreter):
 	"""
 	def __init__(self):
 		super(AdventureCore, self).__init__()
+		#Adventure in progress
 		self.in_game = False
+		#Adventure name
 		self.adventure_name = None
+		#General vars
 		self.game_vars = {}
-		self.game_actions_names = {}
+
+		#Availible game actions 
 		self.game_actions = {}
+		#Executed actions
+		self.executed_actions = []
+
+		#Print output buffer
 		self.output_buffer = []
+		#Game status (STATUS instruction)
 		self.game_status_message = None
 
 		self.stage_history = []
+
 		self.current_stage = False
+
 		self.sentence_processor = adventureWordProcessor()
 
 		self.file_manager = adventureFileParser()
@@ -52,30 +63,29 @@ class AdventureCore(adventureInterpreter):
 		"""Finish the current adventure"""
 		self.in_game = False
 
-	def registerAction(self, action, content):
+	def registerAction(self, action, content, once=False):
 		dprint(f"[+]Registring: {action}")
 		action_index = len(self.game_actions)+1
-		self.game_actions[action_index] = content
-		for action_name in action.split('|'):
-			self.game_actions_names[action_name.strip()] = action_index
+		self.game_actions[action_index] = {
+			'name':[i.strip() for i in action.split('|')],
+			'instructions':content,
+			'once':once #
+		}
 
 	def executeAction(self, sentence):
-		# agregar or |
 		dprint(f"\n[+]Executing action: {sentence}")
+		self.clear_output_buffer()
 		sentence = sentence.lower()
-		if(self.game_actions_names.get(sentence)):
-			self.clear_output_buffer()
-			self.interpret_block_code(
-				self.game_actions[self.game_actions_names[sentence]])
-			return True
-		else:
-			sentence = self.sentence_processor.process(sentence, self.game_actions_names)
-			if(sentence):
-				self.clear_output_buffer()
-				self.interpret_block_code(
-					self.game_actions[self.game_actions_names[sentence]])
+		for index in self.game_actions:
+			game_action = self.game_actions[index]
+			if(sentence in game_action['name']
+			or self.sentence_processor.process(sentence, game_action['name'])):
+				if(game_action['once'] is True and index in self.executed_actions):
+						return False
+				self.interpret_block_code(game_action['instructions'])
+				self.executed_actions.append(index)
 				return True
-		return False
+		return None
 
 	def resetActions(self):
 		"""Reset game actions"""
@@ -116,6 +126,11 @@ class AdventureCore(adventureInterpreter):
 			if(block_type == '!'):
 				# Register actions
 				self.registerAction(block_name, block_content)
+
+			# !!ACTION  run only once
+			if(block_type == '¡'):
+				self.registerAction(block_name, block_content, once=True)
+
 
 		dprint(f"\n[+]Stage '{stage_name}' loaded.")
 		self.stage_history.append(self.current_stage)

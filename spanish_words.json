@@ -5,7 +5,8 @@
 		"levantar":["levantarse", "levanto"],
 		"desayunar":["desayunar", "desayuno"],
 		"tomar":["tomar", "tomo"],
-		"abrir":["abrir", "abro"]
+		"abrir":["abrir", "abro"],
+		"agarrar":["agarrar", "agarro"]
 	},
 	"article":{
 		"la":["femenino",   "singular"],
@@ -19,7 +20,9 @@
 		"casa":["femenino"],
 		"habitacion":["femenino"],
 		"café":["masculino"],
-		"té":["masculino"]
+		"té":["masculino"],
+		"camara":["femenino"],
+		"nota":["femenino"]
 	},
 	"pronoun":{
 		"me":["personal"]

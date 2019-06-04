@@ -19,7 +19,7 @@ class Game(AdventureCore):
 		self.loadDictionary("spanish_words.json")
 		self.openAdventure("habitacion0", "test_adventure/")
 		if(TEST):
-			actions = ["levantarse", "no desayunar"]
+			actions = []
 			for fragment in self.output_buffer:
 					print(fragment)
 			for i in actions:
@@ -36,9 +36,6 @@ class Game(AdventureCore):
 					print(fragment)
 				if(self.in_game is False):
 					return False
-				action = input(">")
-				if(action):
-					self.executeAction(action)
 				action = input(">")
 				if(action):
 					self.executeAction(action)

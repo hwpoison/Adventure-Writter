@@ -15,7 +15,7 @@ class adventureWordProcessor():
 		return {}
 
 	def process(self, sentence, actions=[]):
-		dprint(f"[+]Scanning action {sentence}.")
+		# dprint(f"[+]Scanning action {sentence}.")
 		if(self.dictionary is None):
 			dprint("[-]Word dictionary not initialized")
 			return False
@@ -25,8 +25,6 @@ class adventureWordProcessor():
 
 	def word_type(self, word):
 		# return type and attributes
-		# indicativo | infinitivo presente
-		#   miro     |         mirar
 		for type_key, word_keys in self.dictionary.items():
 			for tword, attrs_ in word_keys.items():
 				if(tword == word or word in attrs_):
@@ -67,20 +65,12 @@ class adventureWordProcessor():
 		return consistency
 
 	def compare(self, original, tocompare):
-		original = self.check_consistency(original)
-		tocompare = self.check_consistency(tocompare)
-		if(original == tocompare):
-			return True
-		return False
-
-# articulo(verbo(nucleo)) >> el mover caja x
-# verbo(articulo(nucleo)) >> mover la caja v 
-# articulo(nucleo(verbo)) >> la caja mover x 
+		for word in original.split(" "):
+			if(word not in tocompare.split(" ")):
+				return False
+		return True
 
 if __name__ == "__main__":
-	processor = adventureWordProcessor('spanish_words.json')
-	a = "mirar techo"
-	b = "mirar el techo"
-	print(processor.compare(a, b))
-	print("_")
-	print(processor.process("mirar la techo", ["mirar techo"]))
+	processor = adventureWordProcessor()
+	cmp = processor.compare("mirar techo", "mirar el techo")
+	print(cmp)

@@ -10,10 +10,12 @@ class adventureInterpreter():
 		self.game_vars = {}
 		self.game_status_message = None
 		self.output_buffer = []
+		self.game_show_image = None
 	
 	def reset_vars(self):
 		self.game_vars = {}
 		self.output_buffer = []
+		self.game_show_image = None
 		self.stage_history = []
 		self.game_status_message = None
 
@@ -116,6 +118,13 @@ class adventureInterpreter():
 			SourceRegex.custom_instruction.format('STATUS'), content)
 		if(status_message):
 			self.game_status_message = status_message[0]
+
+	def set_show_image(self, content):
+		dprint("[+]Setting image show:", content)
+		if(content):
+			self.game_show_image = content.strip()
+		else:
+			dprint(f"[-]Image {content} not found!")
 			
 	def interpret_instruction(self, inst_type, content):
 		"""Process game instruction"""
@@ -129,6 +138,8 @@ class adventureInterpreter():
 			self.finishAdventure()
 		elif(inst_type == 'STATUS'):  # return status message
 			self.set_status_message(content)
+		elif(inst_type == 'IMAGE'):
+			self.set_show_image(content)
 		return False
 		
 	def if_struct_validation(self, params):

@@ -12,6 +12,7 @@
 	Despiertas adolorido, confuso, de a poco tu vista va aclarando.
 	Finalmente reaccionas, parece ser que estas en una habitación sin ventanas, solo una puerta al frente tuyo, vaya a saber como llegaste hasta este lugar, sientes el metal frio de un arma que al parecer sostiene tu mano, nada se sabe, todo es un misterio.
 	El juego comienza ¿Que quieres hacer?.
+	IMAGE carta.png
 :puerta1.trabada = True
 STATUS Este es un nivel de prueba
 }
