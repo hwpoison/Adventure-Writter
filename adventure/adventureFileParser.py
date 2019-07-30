@@ -18,6 +18,7 @@ class adventureFileParser(object):
 		except FileNotFoundError as error:
 			dprint(f"[!]Stage file not found:",
 						filename)
+			print(filename, " is not found")
 			return False
 		code_block = re.compile(SourceRegex.code_blocks_regx,
 								re.MULTILINE | re.DOTALL)

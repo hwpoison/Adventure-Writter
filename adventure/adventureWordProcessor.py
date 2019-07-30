@@ -64,11 +64,22 @@ class adventureWordProcessor():
 			return consistency['verb'][0][0], consistency['sustantive'][1]
 		return consistency
 
+	def tokenize(self, sentence):
+		return sentence.split(" ")
+
 	def compare(self, original, tocompare):
-		for word in original.split(" "):
-			if(word not in tocompare.split(" ")):
+		original = self.tokenize(original)
+		tocompare = self.tokenize(tocompare)
+		len_compare = 0
+		for word in original:
+			if(word not in tocompare):
 				return False
-		return True
+			else:
+				len_compare+=1
+		if(len(tocompare) == len_compare):
+			return True
+		else:
+			return False
 
 if __name__ == "__main__":
 	processor = adventureWordProcessor()

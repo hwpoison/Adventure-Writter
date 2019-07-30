@@ -3,15 +3,20 @@ import sys
 import time
 import configparser
 from tkinter import *
-from PIL import Image, ImageTk
 from tkinter import messagebox, filedialog, font
-from AdventureWritter.adventureCore import AdventureCore
+from adventure.adventureCore import AdventureCore
+try:
+	from PIL import Image, ImageTk
+except ImportError:
+	print("Use to install PIL Lib: pip3 install PIL")
+	sys.exit(1)
 
 __autor__ = "srbill1996"
 __version__ = "1.0"
 
 APP_NAME = f"Adventure Writter [{__version__}]"
 ABOUT_TEXT = f"Creado por {__autor__}\n\n\nhttps://netixzen.blogspot.com.ar/\nPython 3.6/Tkinter 8.6☺2019"
+
 
 config = configparser.ConfigParser()
 if(config.read("config.ini")):
@@ -236,7 +241,7 @@ class GameGUI(GameInterface):
 		self.is_open = False
 		self.clearScreen()
 		adv_test_dir = os.getcwd() + '/test_adventure/habitacion0.adventure'
-		
+		#adv_test_dir = os.getcwd() + '/La Casa de Yoel/inicio.adventure'
 		if(self.current_adventure is None):
 			self.current_adventure = adv_test_dir
 		self.open_adventure(reload=True)

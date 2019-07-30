@@ -1,25 +1,28 @@
-from AdventureWritter.adventureCore import AdventureCore
+from adventure.adventureCore import AdventureCore
 import configparser
 
-# disable script debug messages
-config = configparser.ConfigParser()
-config.read('config.ini')
-is_debug = config['DEBUG']
-if(is_debug.getboolean('debug')):
-	config['DEBUG']['debug'] = 'False'
-with open('config.ini', 'w') as configfile:
-	config.write(configfile)
+TEST = True
+if not TEST:
+	# disable script debug messages
+	config = configparser.ConfigParser()
+	config.read('config.ini')
+	is_debug = config['DEBUG']
+	if(is_debug.getboolean('debug')):
+		config['DEBUG']['debug'] = 'False'
+	with open('config.ini', 'w') as configfile:
+		config.write(configfile)
 
-TEST = False
+
 class Game(AdventureCore):
 	def __init__(self):
 		super(Game, self).__init__()
 
 	def main(self):
 		self.loadDictionary("spanish_words.json")
-		self.openAdventure("habitacion0", "test_adventure/")
+		#self.openAdventure("habitacion0", "test_adventure/")
+		self.openAdventure("inicio", "La casa de Yoel/")
 		if(TEST):
-			actions = []
+			actions = ["toser", "toser"]
 			for fragment in self.output_buffer:
 					print(fragment)
 			for i in actions:
@@ -29,7 +32,7 @@ class Game(AdventureCore):
 				print("=" * 60)
 				for fragment in self.output_buffer:
 					print(fragment)
-				print(self.game_vars)
+				print("Actual game vars:",self.game_vars)
 		else:
 			while True:
 				for fragment in self.output_buffer:

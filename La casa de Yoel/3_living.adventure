@@ -1,0 +1,27 @@
+#ROOM{
+	:stage_name = "Living"
+}
+
+#LOAD{
+	?yoel.desayuno is nada
+		Sin desayunar te diriges al living, para tu sorpresa, no hay nadie aquí.
+	?else
+		Luego de un tranquilo y ameno desayuno, vas al living a ver si hay alguien, te sorprendes por que no hay señal de nadie en la casa.
+	Deben haber salido a algun lugar.
+}
+
+
+!mirar {
+	Hay una nota pegada en la pared
+}
+
+¡leer nota {
+	Dice lo siguiente: "Hola Yoel, te acuerdas de mí? Mira arriba".
+	No entiendes que sucede, de quien se supones que te tienes que acordar?.
+	Luego de observar el escrito por un momento, te das cuenta que en el reverso se puede ver una figura.
+	IMAGE carta_dorso.jpg
+}
+
+!mirar arriba {
+	Miras hacia arriba, te arrepientes.
+}

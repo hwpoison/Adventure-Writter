@@ -1,0 +1,31 @@
+#ROOM{
+	:stage_name = "Cocina"
+}
+
+#LOAD{
+	Con un poco de esfuerzo, decides levantarte, estuviste un momento sentado al borde de la cama observando, anhelando la nada, de un impulso decidiste ir a desayunar a la cocina.
+	En la alacena ves que hay un poco de café y un poco de té.
+	:yoel.desayuno = False
+}
+
+!mirar {
+	?yoel.desayuno is False
+		En la alacena ves que hay un poco de café y un poco de té, estás decidiendo que desayunar.
+}
+
+¡desayunar té | tomar té{
+	Hoy no tienes apetito de café, así que tomas un poco de té con unas galletas.
+	:yoel.desayuno = té
+	&LOAD 3_living
+}
+
+¡desayunar café | tomar café{
+	No quieres té, quieres recargar un poco de energía con un buen y caliente café acompañado de unas galletas dulces.
+	:yoel.desayuno = café
+	&LOAD 3_living
+}
+!no desayunar nada | no desayunar {
+	Tal vez la resaca de anoche te quitó el apetito, mejor no pensar mucho en esto hasta luego.
+	:yoel.desayuno = nada
+	&LOAD 3_living
+}

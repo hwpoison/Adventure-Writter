@@ -82,6 +82,7 @@ class AdventureCore(adventureInterpreter):
 			or self.sentence_processor.process(sentence, game_action['name'])):
 				if(game_action['once'] is True and index in self.executed_actions):
 						return False
+				dprint(f"[+]Action {sentence} is found")
 				self.interpret_block_code(game_action['instructions'])
 				self.executed_actions.append(index)
 				return True
@@ -90,7 +91,7 @@ class AdventureCore(adventureInterpreter):
 	def resetActions(self):
 		"""Reset game actions"""
 		dprint("[+]Game actions reseted")
-		self.game_actions_names = {}
+		self.game_actions = {}
 
 	def load_stage_file(self, stage_name, adv_dir):
 		"""Open and initialize stage variables"""
@@ -99,6 +100,7 @@ class AdventureCore(adventureInterpreter):
 			return 
 
 		self.resetActions()
+
 		for block_type, block_name, block_content, in parser_content:
 			# #ROOM{}
 			block_name = block_name.strip().lower()
