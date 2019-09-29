@@ -6,9 +6,11 @@ class SourceRegex:
     load_function = r'(LOAD|CARGAR)\s+(.*)$'
     or_regx = r'or|\|\||\so'
     and_regx = r'and|&&|'  # fix /s x/s
+    #conditionals
     check_is_regx = r'is|'
     check_notis_regx = r'not is|is not|'
     check_in_regx = r'|in'
+
     code_blocks_regx = r'([#\!\¡])([áéíóúa-zA-Z0-9_-\|-\s-]*)\{(.*?)\}'
     var_scope_value_regx = r'\$(.*?)\$'
     var_scope_regx = r'(\$.*?\$)'

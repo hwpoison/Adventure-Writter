@@ -1,6 +1,8 @@
-from .source_Regex import SourceRegex
-from .debug import dprint
 import re
+
+from adventure.source_Regex import SourceRegex
+from adventure.debug import dprint
+
 
 
 class adventureInterpreter():
@@ -216,6 +218,7 @@ class adventureInterpreter():
 					self.interpret_instruction(inst_type, content)
 			if(tab_lvl == min_lvl or min_lvl is False):
 				self.interpret_instruction(inst_type, content)
+		return True
 
 if __name__ == '__main__':
 	n = adventureInterpreter()
