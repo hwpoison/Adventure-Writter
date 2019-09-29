@@ -1,4 +1,6 @@
 # Adventure Writer
+ ![Image](https://raw.githubusercontent.com/srbill1996/Adventure-Writter/master/preview.png)
+
 
 Adventure writter te permite crear tus propias aventuras conversacionaes facil y rapidamente.
 
