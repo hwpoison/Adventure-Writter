@@ -26,7 +26,7 @@
 	Estas tirado en la cama mirando el techo. Tal vez podrías, ¿Levantarte?.
 }
 
-!me levanto {
+!levantarse {
 	:yoel.levantado = True
 	&LOAD 2_cocina
 }

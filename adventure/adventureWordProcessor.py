@@ -1,6 +1,6 @@
 import json
 
-from debug import dprint
+from adventure.debug import dprint
 
 class adventureWordProcessor():
 	"""A rudimentary method to detect simple sentence consistencys"""
