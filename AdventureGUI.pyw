@@ -248,7 +248,7 @@ class GameGUI(GameInterface):
         self.is_open = False
         self.clearScreen()
        # adv_test_dir = os.getcwd() + '/test_adventure/habitacion0.adventure'
-        adv_test_dir = os.getcwd() + '/La Casa de Yoel/inicio.adventure'
+        adv_test_dir = os.getcwd() + '/La casa de Yoel/inicio.adventure'
         if(self.current_adventure is None):
             self.current_adventure = adv_test_dir
         self.open_adventure(reload=True)
