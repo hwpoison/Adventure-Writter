@@ -1,0 +1,28 @@
+#ROOM{
+	:stage_name = "Tu casa"
+	:stage_description = "Estás en tu habitación"
+}
+
+#LOAD_AGAIN {
+	Vuelves a tu habitación, está todo igual que antes, nada por hacer.
+}
+
+#LOAD 
+{
+:alarma = sonando
+Despiertas de una larga noche en la cama de tu habitación, la alarma no para de sonar
+y comienzas a mostrarte despavilado.
+IMAGE alarma.jpg
+}
+
+!ir a la cocina {
+	Te levantas y vas a la cocina.
+	&LOAD miniaventura_cocina_2
+}
+!apagar alarma {
+	?alarma is sonando
+		Apagas la alarma, ahora por fín la calma ahonda tus sentidos
+		:alarma = 'apagada'
+	?else
+		Ya hiciste eso
+}

@@ -21,7 +21,7 @@ class Game(advMain):
 
     def main(self):
         self.loadDictionary("spanish_words.json")
-        self.openAdventure("test", "test_adventure/")
+        self.openAdventure("miniaventura_inicio", "test_adventure/")
         #self.openAdventure("inicio", "La casa de Yoel/")
         if(TEST):
         	#test mode

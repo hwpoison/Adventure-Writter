@@ -77,6 +77,7 @@ class advMain(advInterpreter, advFileManager):
         dprint(f"\n[+]Executing action: {sentence}")
         self.clear_output_buffer()
         sentence = sentence.lower()
+        dprint("vars:", self.game_vars)
         for index in self.game_actions:
             game_action = self.game_actions[index]
             if(sentence in game_action['name']
@@ -96,6 +97,7 @@ class advMain(advInterpreter, advFileManager):
 
     def loadStage(self, stage_name, adv_dir):
         """Open and initialize stage variables"""
+        dprint(f"[+]Loading {stage_name}...")
         parser_content = self.load_stage_file(stage_name, adv_dir)
         if(parser_content is False):
             return
@@ -124,6 +126,7 @@ class advMain(advInterpreter, advFileManager):
             elif block_type == '#' and block_name == 'load':
                 # Initialize scene variables
                 self.interpret_block_code(block_content)
+                print(self.game_vars)
 
             # !ACTION{}
             if block_type == '!':

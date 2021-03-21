@@ -1,0 +1,17 @@
+#ROOM{
+	:stage_name = "La cocina"
+	:stage_description = "Tu cocina"
+}
+
+#LOAD 
+{
+La cocina está impecable, hay un poco de té y de café en la alacena.
+}
+
+¡servir café {
+	Te sirves un poco de café
+}
+
+¡servir té {
+	Te sirves un poco de té
+}

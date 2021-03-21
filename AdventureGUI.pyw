@@ -248,8 +248,7 @@ class GameGUI(GameInterface):
     def load_test(self):
         self.is_open = False
         self.clearScreen()
-        adv_test_dir = os.getcwd() + '/test_adventure/test.adventure'
-        #adv_test_dir = os.getcwd() + '/La casa de Yoel/inicio.adventure'
+        adv_test_dir = os.getcwd() + '/test_adventure/miniaventura_inicio.adventure'
         if(self.current_adventure is None):
             self.current_adventure = adv_test_dir
         self.open_adventure(reload=True)
@@ -315,7 +314,7 @@ class GameGUI(GameInterface):
 class About():
     def __init__(self, parent):
         top = self.top = Toplevel(parent)
-        top.iconbitmap('icon.ico')
+        top.iconbitmap('assets/icon.ico')
         top.title(gui_text['about_title'])
         top.geometry("650x200")
         top.resizable(False, False)

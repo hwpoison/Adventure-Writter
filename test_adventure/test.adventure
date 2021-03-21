@@ -10,7 +10,6 @@
 #LOAD 
 {
 :silla_color = rojo
-:askjdalsd)"="
 Apareces atado en una silla!
 ?silla_color is rojo
 	La silla es roja
