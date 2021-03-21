@@ -2,7 +2,7 @@ import json
 
 from adventure.debug import dprint
 
-class adventureWordProcessor():
+class advWordsProcessor():
 	"""A rudimentary method to detect simple sentence consistencys"""
 	def __init__(self):
 		self.dictionary = {}

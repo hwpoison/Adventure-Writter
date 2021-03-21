@@ -9,7 +9,13 @@
 
 #LOAD 
 {
-	Apareces atado en una silla
+:silla_color = rojo
+:askjdalsd)"="
+Apareces atado en una silla!
+?silla_color is rojo
+	La silla es roja
+?else
+	La silla no era roja
 }
 
 
@@ -18,4 +24,7 @@
 }
 !test2 {
 	Hola
+}
+¡test3 {
+	Esta acción solo puede ser ejecutada una vez!!!
 }

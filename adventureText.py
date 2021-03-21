@@ -1,9 +1,9 @@
 import configparser
 
-from adventure.adventureCore import AdventureCore
+from adventure.advMain import advMain
 
 
-TEST = False
+TEST = True
 if not TEST:
     # disable script debug messages
     config = configparser.ConfigParser()
@@ -15,26 +15,29 @@ if not TEST:
         config.write(configfile)
 
 
-class Game(AdventureCore):
+class Game(advMain):
     def __init__(self):
         super(Game, self).__init__()
 
     def main(self):
         self.loadDictionary("spanish_words.json")
-        #self.openAdventure("habitacion0", "test_adventure/")
-        self.openAdventure("inicio", "La casa de Yoel/")
+        self.openAdventure("test", "test_adventure/")
+        #self.openAdventure("inicio", "La casa de Yoel/")
         if(TEST):
         	#test mode
-            actions = ["toser", "toser"]
+            actions = ["test2", "test3", "test3"]
+
             for fragment in self.output_buffer:
                 print(fragment)
-            for i in actions:
+            for action in actions:
                 if(self.in_game is False):
                     return False
-                self.executeAction(i)
+                self.executeAction(action)
                 print("=" * 60)
+                print("[",action,"]")
                 for fragment in self.output_buffer:
                     print(fragment)
+                print()
                 print("Actual game vars:", self.game_vars)
         else:
         	#normal mode

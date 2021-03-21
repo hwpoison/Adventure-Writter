@@ -11,13 +11,13 @@ except ImportError:
     print("Use to install PIL Lib: pip3 install PIL")
     sys.exit(1)
 
-from adventure.adventureCore import AdventureCore
+from adventure.advMain import advMain
 
 
 __autor__ = "Guillermo Giménez"
-__version__ = "1.0"
+__version__ = "1.2"
 
-APP_NAME = f"Adventure Writter [{__version__}]"
+APP_NAME = f"Adventure Writter {__version__}"
 ABOUT_TEXT = f"Creado por {__autor__}\n\n\nhttps://netixzen.blogspot.com.ar/\nPython 3.6/Tkinter 8.6☺2019"
 
 
@@ -38,7 +38,7 @@ class GameInterface():
     """
 
     def __init__(self, window):
-        self.adventure = AdventureCore()
+        self.adventure = advMain()
 
         self.frame = Frame(window)
         self.userInput = StringVar()
@@ -142,13 +142,14 @@ class GameInterface():
     def enterAction(self):
         user_command = self.getUserInput()
         execute_action = self.adventure.executeAction(user_command)
-        if(execute_action is True):
+        if execute_action:
             self.updateScreen(self.adventure.output_buffer, 'adventureText')
-        elif(execute_action is False):
+        elif execute_action is False:
             self.updateScreen([f"{gui_text['txt_action_once']} {user_command}!"], 'failAction')
         else:
             self.updateScreen([gui_text['txt_you_cant']], 'failAction')
-
+        for action in self.adventure.game_actions.values():
+            print(action['name'])
         self.updateStatusVars()
         self.showGameImage()
 
@@ -190,7 +191,7 @@ class GameGUI(GameInterface):
             self.main_window.quit()
 
     def init_window(self):
-        self.main_window.iconbitmap('icon.ico')
+        self.main_window.iconbitmap('assets/icon.ico')
         self.main_window.title(APP_NAME)
         self.main_window.resizable(0, 0)
         self.main_window.geometry(f'{self.WIDTH}x{self.HEIGHT}+{self.POSX}+{self.POSY}')
@@ -199,7 +200,7 @@ class GameGUI(GameInterface):
 
     def showGameImage(self):
         if self.adventure.game_show_image:
-            image_path = self.adventure.file_manager.current_directory + \
+            image_path = self.adventure.current_directory + \
                 "/" + self.adventure.game_show_image
             ImageBox(self.main_window, image_path)
             self.adventure.game_show_image = None
@@ -247,8 +248,8 @@ class GameGUI(GameInterface):
     def load_test(self):
         self.is_open = False
         self.clearScreen()
-       # adv_test_dir = os.getcwd() + '/test_adventure/habitacion0.adventure'
-        adv_test_dir = os.getcwd() + '/La casa de Yoel/inicio.adventure'
+        adv_test_dir = os.getcwd() + '/test_adventure/test.adventure'
+        #adv_test_dir = os.getcwd() + '/La casa de Yoel/inicio.adventure'
         if(self.current_adventure is None):
             self.current_adventure = adv_test_dir
         self.open_adventure(reload=True)
@@ -258,7 +259,7 @@ class GameGUI(GameInterface):
 
     def open_adventure(self, reload=False):
         """open adventure in gui"""
-        if(self.is_open or self.adventure.in_game):
+        if self.is_open or self.adventure.in_game:
             progress = messagebox.askyesno(
                 'Atención', gui_text['msg_open_another_adventure'])
             if(progress is False):
@@ -267,13 +268,13 @@ class GameGUI(GameInterface):
                 self.adventure.in_game = False
                 self.is_open = False
         self.clearScreen()
-        if(reload):
+        if reload:
             get_dir = self.current_adventure
         else:
             get_dir = str(filedialog.askopenfile().name)
         adv_full_dir = re.findall(r'(.*)/(\w+)\.adventure+', get_dir)
         self.current_adventure = get_dir
-        if(adv_full_dir):
+        if adv_full_dir:
             file_dir, file_name = adv_full_dir[0]
             if(self.adventure.openAdventure(file_name, adventure_dir=file_dir)):
                 if(self.adventure.adventure_name):
@@ -319,7 +320,7 @@ class About():
         top.geometry("650x200")
         top.resizable(False, False)
         top.deiconify()
-        imagen = Image.open("logo.png")
+        imagen = Image.open("assets/logo.png")
         photo = ImageTk.PhotoImage(imagen)
         title = Label(top,
                       font="Algerian 25",

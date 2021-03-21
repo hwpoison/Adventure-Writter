@@ -1,8 +1,8 @@
 import unittest
 
-from adventureInterpreter import adventureInterpreter
+from adventure.advInterpreter import advInterpreter
 
-interpreter_instance = adventureInterpreter()
+interpreter_instance = advInterpreter()
 
 
 class coreTest(unittest.TestCase):

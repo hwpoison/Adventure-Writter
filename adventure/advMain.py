@@ -1,12 +1,12 @@
-from .adventureWordProcessor import adventureWordProcessor
-from .adventureInterpreter import adventureInterpreter
-from .adventureFileParser import adventureFileParser
-from adventure.source_Regex import SourceRegex
+from .advWordsProcessor import advWordsProcessor
+from .advInterpreter import advInterpreter
+from .advFileManager import advFileManager
 from adventure.debug import dprint
 import re
 
+# Adventure instance
 
-class AdventureCore(adventureInterpreter):
+class advMain(advInterpreter, advFileManager):
     """
             loadDictionary : load dictionary words
             openAdventure : initialize game adventure
@@ -18,13 +18,13 @@ class AdventureCore(adventureInterpreter):
     """
 
     def __init__(self):
-        super(AdventureCore, self).__init__()
+        super(advMain, self).__init__()
         #Adventure in progress
         self.in_game = False
         # Adventure name
         self.adventure_name = None
         # General vars
-        self.game_vars = {}
+        #self.game_vars = {}
 
         # Availible game actions
         self.game_actions = {}
@@ -40,22 +40,20 @@ class AdventureCore(adventureInterpreter):
 
         self.current_stage = False
 
-        self.sentence_processor = adventureWordProcessor()
-
-        self.file_manager = adventureFileParser()
+        self.sentence_processor = advWordsProcessor()
 
     def loadDictionary(self, file):
         self.sentence_processor.load_dictionary(file)
 
     def openAdventure(self, adventure_name, adventure_dir=''):
         """Load adventure and initialize game vars (for GUI)"""
-        if(self.in_game):
+        if self.in_game:
             return False
         self.resetActions()
         self.reset_vars()
-        adventure_content = self.load_stage_file(
+        adventure_content = self.loadStage(
             adventure_name, adv_dir=adventure_dir)
-        if(adventure_content):
+        if adventure_content:
             dprint("[+]Adventure initialized!")
             self.in_game = True
             return True
@@ -83,7 +81,7 @@ class AdventureCore(adventureInterpreter):
             game_action = self.game_actions[index]
             if(sentence in game_action['name']
                or self.sentence_processor.process(sentence, game_action['name'])):
-                if(game_action['once'] is True and index in self.executed_actions):
+                if game_action['once'] is True and index in self.executed_actions:
                     return False
                 dprint(f"[+]Action {sentence} is found")
                 self.interpret_block_code(game_action['instructions'])
@@ -96,9 +94,9 @@ class AdventureCore(adventureInterpreter):
         dprint("[+]Game actions reseted")
         self.game_actions = {}
 
-    def load_stage_file(self, stage_name, adv_dir):
+    def loadStage(self, stage_name, adv_dir):
         """Open and initialize stage variables"""
-        parser_content = self.file_manager.load_stage_file(stage_name, adv_dir)
+        parser_content = self.load_stage_file(stage_name, adv_dir)
         if(parser_content is False):
             return
 
@@ -107,7 +105,7 @@ class AdventureCore(adventureInterpreter):
         for block_type, block_name, block_content, in parser_content:
             # #ROOM{}
             block_name = block_name.strip().lower()
-            if(block_type == '#' and block_name == 'room'):
+            if block_type == '#' and block_name == 'room':
                 """Room specifications"""
                 self.interpret_block_code(block_content)
                 if(self.game_vars.get('stage_name')):
@@ -118,34 +116,34 @@ class AdventureCore(adventureInterpreter):
             # #LOAD_AGAIN{}
             if self.current_stage in self.stage_history:
                 """If loaded again"""
-                if(block_type == '#' and block_name == 'load_again'):
+                if block_type == '#' and block_name == 'load_again':
                     # Initialize scene variables
                     self.interpret_block_code(block_content)
 
             # #LOAD{}
-            elif(block_type == '#' and block_name == 'load'):
+            elif block_type == '#' and block_name == 'load':
                 # Initialize scene variables
                 self.interpret_block_code(block_content)
 
             # !ACTION{}
-            if(block_type == '!'):
+            if block_type == '!':
                 # Register actions
                 self.registerAction(block_name, block_content)
 
             # !!ACTION  run only once
-            if(block_type == '¡'):
+            if block_type == '¡':
                 self.registerAction(block_name, block_content, once=True)
 
         dprint(f"\n[+]Stage '{stage_name}' loaded.")
         self.stage_history.append(self.current_stage)
         return True
 
-    def stage_call_function(self, string):
+    def callStage(self, string):
         """Load a stage (& instruction)"""
-        load_stage = re.findall(SourceRegex.load_function, string)
-        if(load_stage):
-            self.load_stage_file(
-                load_stage[0][1], adv_dir=self.file_manager.current_directory)
+        load_stage = re.findall(r'(LOAD|CARGAR)\s+(.*)$', string)
+        if load_stage:
+            self.loadStage(
+                load_stage[0][1], adv_dir=self.current_directory)
             return True
         return False
 
